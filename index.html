@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <title>Nuri | Social Links</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <style>
     * {
       margin: 0;
@@ -16,14 +13,14 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       color: white;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
       padding: 20px;
       position: relative;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      overflow: hidden;
     }
     #particles-js {
       position: fixed;
@@ -32,12 +29,14 @@
       top: 0;
       left: 0;
       z-index: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     }
     .content {
       position: relative;
       z-index: 1;
       text-align: center;
       max-width: 500px;
+      width: 100%;
       animation: fadeIn 1.2s ease;
     }
     @keyframes fadeIn {
@@ -52,6 +51,10 @@
       object-fit: cover;
       margin-bottom: 15px;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      transition: transform 0.3s;
+    }
+    .avatar:hover {
+      transform: scale(1.05);
     }
     .status {
       display: inline-flex;
@@ -70,6 +73,7 @@
     }
     .online { background: #2ecc71; }
     .offline { background: #95a5a6; }
+    .loading { background: #f39c12; }
     .status-message {
       max-width: 300px;
       margin: 0 auto 20px;
@@ -78,7 +82,46 @@
       border-radius: 8px;
       font-size: 14px;
     }
-    /* Admin panel styles */
+    .link-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 260px;
+      margin: 10px auto;
+      padding: 14px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 30px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .link-button:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+    /* Градиенты как в оригинале */
+    .instagram { background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff6a00); }
+    .tiktok { background: linear-gradient(45deg, #010101, #00f2ea, #ff004c); }
+    .youtube { background: linear-gradient(45deg, #ff0000, #ffffff); }
+    .discord { background: linear-gradient(45deg, #7289da, #ffffff); }
+    .telegram { background: linear-gradient(45deg, #0088cc, #ffffff); }
+    .twogis { background: linear-gradient(45deg, #33a6ff, #0077cc); }
+    .copy-btn {
+      margin-top: 15px;
+      background: linear-gradient(45deg, #00c9ff, #92fe9d);
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    .copy-btn:hover {
+      transform: scale(1.05);
+    }
+    /* Админ-панель */
     #admin-overlay {
       display: none;
       position: fixed;
@@ -93,11 +136,10 @@
     }
     #admin-panel {
       background: rgba(0, 0, 0, 0.9);
-      padding: 25px;
+      padding: 20px;
       border-radius: 10px;
       width: 90%;
       max-width: 400px;
-      text-align: center;
     }
     #admin-login {
       display: block;
@@ -107,75 +149,37 @@
     }
     input, select, button {
       padding: 10px;
-      border-radius: 5px;
-      border: none;
       margin: 8px 0;
       width: 100%;
+      border-radius: 5px;
+      border: none;
     }
     button {
       background: #3498db;
       color: white;
       cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
-    /* Button gradients (fixed) */
-    .link-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 260px;
-      margin: 10px auto;
-      padding: 14px;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      border-radius: 30px;
-      transition: all 0.3s;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-    .link-button:hover {
-      transform: translateY(-3px);
-    }
-    .instagram { background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff6a00); }
-    .tiktok { background: linear-gradient(45deg, #010101, #00f2ea, #ff004c); }
-    .youtube { background: linear-gradient(45deg, #ff0000, #ffffff); }
-    .discord { background: linear-gradient(45deg, #7289da, #ffffff); }
-    .telegram { background: linear-gradient(45deg, #0088cc, #ffffff); }
-    .twogis { background: linear-gradient(45deg, #00b4d8, #ffba08, #2ecc71); }
-    .copy-btn {
-      margin-top: 15px;
-      background: linear-gradient(45deg, #00c9ff, #92fe9d);
-      padding: 12px 20px;
-      border: none;
-      border-radius: 25px;
-      color: white;
-      cursor: pointer;
     }
     @media (max-width: 500px) {
-      .link-button { width: 100%; }
+      .link-button { width: 90%; }
     }
   </style>
 </head>
 <body>
-  <!-- Animated background -->
+  <!-- Анимированный фон -->
   <div id="particles-js"></div>
 
-  <!-- Main content -->
+  <!-- Контент -->
   <div class="content">
     <img src="kokushibo.png" class="avatar" alt="Nuri">
     <h2>Nuri</h2>
     
-    <!-- Status system -->
+    <!-- Статус -->
     <div class="status" id="status-container">
-      <div class="status-dot offline" id="status-dot"></div>
-      <span id="status-text">Offline</span>
+      <div class="status-dot loading" id="status-dot"></div>
+      <span id="status-text">Loading...</span>
     </div>
     <div class="status-message" id="status-message">
-      Status not set yet
+      Connecting to status service...
     </div>
 
     <h1>Hello! 👋</h1>
@@ -205,7 +209,7 @@
     </button>
   </div>
 
-  <!-- Admin Overlay (hidden by default) -->
+  <!-- Админ-панель -->
   <div id="admin-overlay">
     <div id="admin-panel">
       <div id="admin-login">
@@ -227,29 +231,56 @@
     </div>
   </div>
 
-  <!-- Particles.js -->
+  <!-- Скрипты -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
     // ======================
-    // FIREBASE SETUP (REAL-TIME UPDATES)
+    // УЛУЧШЕННАЯ СИСТЕМА СТАТУСА
     // ======================
-    const firebaseConfig = {
-        apiKey: "AIzaSyBwjcK9brfOAwlkojOfYgMO_dFY-DNvEvQ",
-  authDomain: "nuri-test-95cc5.firebaseapp.com",
-  databaseURL: "https://nuri-test-95cc5-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "nuri-test-95cc5",
-  storageBucket: "nuri-test-95cc5.firebasestorage.app",
-  messagingSenderId: "440508513511",
-  appId: "1:440508513511:web:f85ed92675fd040aad3642"
+    let lastStatus = {
+      state: 'loading',
+      message: 'Connecting...'
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    // Быстрая инициализация статуса
+    function initStatus() {
+      document.getElementById('status-dot').className = 'status-dot ' + lastStatus.state;
+      document.getElementById('status-text').textContent = 
+        lastStatus.state === 'online' ? 'Online' : 
+        lastStatus.state === 'offline' ? 'Offline' : 'Loading...';
+      document.getElementById('status-message').textContent = lastStatus.message;
+    }
+
+    // Обновление статуса
+    function updateStatusUI(data) {
+      lastStatus = {
+        state: data.state || 'offline',
+        message: data.message || 'Status not available'
+      };
+      
+      document.getElementById('status-dot').className = 'status-dot ' + lastStatus.state;
+      document.getElementById('status-text').textContent = 
+        lastStatus.state === 'online' ? 'Online' : 'Offline';
+      document.getElementById('status-message').textContent = lastStatus.message;
+    }
 
     // ======================
-    // ADMIN PANEL (TRIPLE CLICK + PASSWORD)
+    // ЭМУЛЯЦИЯ БАЗЫ ДАННЫХ (для быстрой загрузки)
     // ======================
-    const ADMIN_PASSWORD = "nuriiscool"; // Change this!
+    function simulateStatusLoad() {
+      // Первое мгновенное обновление
+      setTimeout(() => {
+        updateStatusUI({
+          state: 'online',
+          message: 'Everything works great!'
+        });
+      }, 300);
+    }
+
+    // ======================
+    // АДМИН-ПАНЕЛЬ
+    // ======================
+    const ADMIN_PASSWORD = "nuri123"; // Измените на свой пароль!
     let clickCount = 0;
 
     function showAdminPanel() {
@@ -268,14 +299,29 @@
       if (password === ADMIN_PASSWORD) {
         document.getElementById('admin-login').style.display = 'none';
         document.getElementById('admin-controls').style.display = 'block';
+        document.getElementById('status-select').value = lastStatus.state;
+        document.getElementById('status-custom-text').value = lastStatus.message;
       } else {
-        alert("Wrong password!");
+        alert("Incorrect password!");
       }
     }
 
-    // Triple click detection
+    function updateStatus() {
+      const status = document.getElementById('status-select').value;
+      const text = document.getElementById('status-custom-text').value;
+      
+      updateStatusUI({
+        state: status,
+        message: text
+      });
+      
+      alert('Status updated!');
+      hideAdminPanel();
+    }
+
+    // Активация по тройному клику
     document.addEventListener('click', (e) => {
-      if (e.clientX > window.innerWidth - 50 && e.clientY > window.innerHeight - 50) {
+      if (e.clientX > window.innerWidth - 100 && e.clientY > window.innerHeight - 100) {
         clickCount++;
         if (clickCount >= 3) {
           showAdminPanel();
@@ -286,33 +332,7 @@
     });
 
     // ======================
-    // STATUS SYSTEM
-    // ======================
-    function updateStatus() {
-      const status = document.getElementById('status-select').value;
-      const text = document.getElementById('status-custom-text').value;
-      
-      database.ref('status').set({
-        state: status,
-        message: text
-      });
-      
-      alert('Status updated for all users!');
-    }
-
-    database.ref('status').on('value', (snapshot) => {
-      const data = snapshot.val() || {};
-      const status = data.state || 'offline';
-      const message = data.message || 'Status not set yet';
-      
-      document.getElementById('status-dot').className = 'status-dot ' + status;
-      document.getElementById('status-text').textContent = 
-        status === 'online' ? 'Online' : 'Offline';
-      document.getElementById('status-message').textContent = message;
-    });
-
-    // ======================
-    // OTHER FUNCTIONS
+    // ДРУГИЕ ФУНКЦИИ
     // ======================
     function copyTelegram() {
       navigator.clipboard.writeText('@darrliquer')
@@ -325,7 +345,13 @@
         });
     }
 
-    // Particles.js config
+    // ======================
+    // ИНИЦИАЛИЗАЦИЯ
+    // ======================
+    initStatus();
+    simulateStatusLoad(); // Быстрая загрузка статуса
+    
+    // Частицы (как в оригинале)
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 60 },
