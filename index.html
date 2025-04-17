@@ -72,7 +72,7 @@
     }
     .online { background: #2ecc71; }
     .offline { background: #95a5a6; }
-    .unknown { background: #f39c12; }
+    .loading { background: #f39c12; }
     .status-message {
       max-width: 300px;
       margin: 0 auto 20px;
@@ -146,7 +146,7 @@
     .youtube { background: linear-gradient(45deg, #ff0000, #ffffff); }
     .discord { background: linear-gradient(45deg, #7289da, #ffffff); }
     .telegram { background: linear-gradient(45deg, #0088cc, #ffffff); }
-    .twogis { background: linear-gradient(45deg, #33a6ff, #0077cc); }
+    .twogis { background: linear-gradient(45deg, #00b4d8, #ffbe0b, #38b000); }
     .copy-btn {
       margin-top: 15px;
       background: linear-gradient(45deg, #00c9ff, #92fe9d);
@@ -179,7 +179,7 @@
     
     <!-- Status system -->
     <div class="status" id="status-container">
-      <div class="status-dot unknown" id="status-dot"></div>
+      <div class="status-dot loading" id="status-dot"></div>
       <span id="status-text">Loading...</span>
     </div>
     <div class="status-message" id="status-message">
@@ -240,31 +240,57 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <script>
+    // ======================
+    // FIREBASE CONFIGURATION
+    // ======================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBwjcK9brfOAwlkojOfYgMO_dFY-DNvEvQ",
+      authDomain: "nuri-test-95cc5.firebaseapp.com",
+      databaseURL: "https://nuri-test-95cc5-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "nuri-test-95cc5",
+      storageBucket: "nuri-test-95cc5.firebasestorage.app",
+      messagingSenderId: "440508513511",
+      appId: "1:440508513511:web:f85ed92675fd040aad3642"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const SECRET_KEY = "nxriiscool"; // Must match Firebase rules
+
     // ======================
     // STATUS SYSTEM
     // ======================
-    let currentStatus = {
-      state: "online",
-      message: "Everything works great!"
-    };
+    function loadStatus() {
+      database.ref('status').on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        updateUI(data);
+      });
+    }
 
-    function initStatus() {
-      setTimeout(() => {
-        document.getElementById('status-dot').className = 'status-dot ' + currentStatus.state;
-        document.getElementById('status-text').textContent = 
-          currentStatus.state === 'online' ? 'Online' : 'Offline';
-        document.getElementById('status-message').textContent = currentStatus.message;
-      }, 300);
+    function updateUI(status) {
+      document.getElementById('status-dot').className = 'status-dot ' + (status.state || 'loading');
+      document.getElementById('status-text').textContent = 
+        status.state === 'online' ? 'Online' : 
+        status.state === 'offline' ? 'Offline' : 'Loading';
+      document.getElementById('status-message').textContent = status.message || 'Status not available';
     }
 
     // ======================
     // ADMIN PANEL (TRIPLE-CLICK + HOTKEY)
     // ======================
-    const ADMIN_PASSWORD = "nxriiscool"; // CHANGE THIS!
+    const ADMIN_PASSWORD = "nuriiscool"; // Changed to your requested password
     let clickCount = 0;
 
     function showAdminPanel() {
+      database.ref('status').once('value').then((snapshot) => {
+        const currentStatus = snapshot.val() || {};
+        document.getElementById('status-select').value = currentStatus.state || 'online';
+        document.getElementById('status-custom-text').value = currentStatus.message || '';
+      });
       document.getElementById('admin-overlay').style.display = 'flex';
       document.getElementById('admin-login').style.display = 'block';
       document.getElementById('admin-controls').style.display = 'none';
@@ -279,26 +305,26 @@
       if (password === ADMIN_PASSWORD) {
         document.getElementById('admin-login').style.display = 'none';
         document.getElementById('admin-controls').style.display = 'block';
-        document.getElementById('status-select').value = currentStatus.state;
-        document.getElementById('status-custom-text').value = currentStatus.message;
       } else {
         alert("Incorrect password!");
       }
     }
 
     function updateStatus() {
-      currentStatus = {
-        state: document.getElementById('status-select').value,
-        message: document.getElementById('status-custom-text').value || "Status not set"
-      };
+      const status = document.getElementById('status-select').value;
+      const text = document.getElementById('status-custom-text').value;
       
-      document.getElementById('status-dot').className = 'status-dot ' + currentStatus.state;
-      document.getElementById('status-text').textContent = 
-        currentStatus.state === 'online' ? 'Online' : 'Offline';
-      document.getElementById('status-message').textContent = currentStatus.message;
-      
-      alert("Status updated!");
-      hideAdminPanel();
+      database.ref('status').set({
+        state: status,
+        message: text,
+        secretKey: SECRET_KEY, // Required by your Firebase rules
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      }).then(() => {
+        alert("Status updated permanently!");
+        hideAdminPanel();
+      }).catch((error) => {
+        alert("Error updating: " + error.message);
+      });
     }
 
     // Triple-click detection (bottom-right corner)
@@ -337,7 +363,7 @@
     // ======================
     // INITIALIZATION
     // ======================
-    initStatus();
+    loadStatus();
     
     // Particles.js configuration
     particlesJS("particles-js", {
