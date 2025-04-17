@@ -6,50 +6,245 @@
   <title>Nuri | Social Links</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* Все предыдущие стили остаются без изменений */
-    /* ... */
-    
-    /* Новые стили для формы аутентификации */
-    .auth-form {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    }
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 500px;
+      animation: fadeIn 1.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 4px solid white;
+      object-fit: cover;
+      margin-bottom: 15px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      transition: transform 0.3s;
+    }
+    .avatar:hover {
+      transform: scale(1.05);
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 15px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      font-size: 14px;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .online { background: #2ecc71; }
+    .offline { background: #95a5a6; }
+    .loading { background: #f39c12; }
+    .status-message {
+      max-width: 300px;
+      margin: 0 auto 20px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    #admin-overlay {
       display: none;
       position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.9);
-      padding: 20px;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    #admin-panel {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 25px;
       border-radius: 10px;
-      z-index: 1000;
       width: 90%;
       max-width: 400px;
+      text-align: center;
     }
-    .auth-form input {
-      margin: 10px 0;
-      width: 100%;
+    #admin-login {
+      display: block;
+    }
+    #admin-controls {
+      display: none;
+    }
+    input, select, button {
       padding: 10px;
+      border-radius: 5px;
+      border: none;
+      margin: 8px 0;
+      width: 100%;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .link-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 260px;
+      margin: 10px auto;
+      padding: 14px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 30px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .link-button:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+    .instagram { background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff6a00); }
+    .tiktok { background: linear-gradient(45deg, #010101, #00f2ea, #ff004c); }
+    .youtube { background: linear-gradient(45deg, #ff0000, #ffffff); }
+    .discord { background: linear-gradient(45deg, #7289da, #ffffff); }
+    .telegram { background: linear-gradient(45deg, #0088cc, #ffffff); }
+    .twogis { background: linear-gradient(45deg, #00b4d8, #ffbe0b, #38b000); }
+    .copy-btn {
+      margin-top: 15px;
+      background: linear-gradient(45deg, #00c9ff, #92fe9d);
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      cursor: pointer;
+    }
+    .admin-hint {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(255,255,255,0.3);
+      font-size: 12px;
+    }
+    @media (max-width: 500px) {
+      .link-button { width: 90%; }
     }
   </style>
 </head>
 <body>
-  <!-- Весь предыдущий HTML остаётся -->
-  <!-- ... -->
+  <!-- Animated background -->
+  <div id="particles-js"></div>
 
-  <!-- Добавляем форму для входа -->
-  <div id="auth-form" class="auth-form">
-    <h3>Admin Login</h3>
-    <input type="email" id="auth-email" placeholder="Email">
-    <input type="password" id="auth-password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <button onclick="hideAuthForm()" style="background: #e74c3c; margin-top: 10px;">Cancel</button>
+  <!-- Main content -->
+  <div class="content">
+    <img src="kokushibo.png" class="avatar" alt="Nuri">
+    <h2>Nuri</h2>
+    
+    <!-- Status system -->
+    <div class="status" id="status-container">
+      <div class="status-dot loading" id="status-dot"></div>
+      <span id="status-text">Loading...</span>
+    </div>
+    <div class="status-message" id="status-message">
+      Connecting to status service...
+    </div>
+
+    <h1>Hello! 👋</h1>
+    <p>Connect with me:</p>
+
+    <a class="link-button instagram" href="https://instagram.com/nxr1_ba" target="_blank">
+      <i class="fab fa-instagram"></i> Instagram
+    </a>
+    <a class="link-button tiktok" href="https://tiktok.com/@nxr1_ba" target="_blank">
+      <i class="fab fa-tiktok"></i> TikTok
+    </a>
+    <a class="link-button youtube" href="https://youtube.com/@Nuriiscool" target="_blank">
+      <i class="fab fa-youtube"></i> YouTube
+    </a>
+    <a class="link-button discord" href="https://discord.gg/R2D36VqGKA" target="_blank">
+      <i class="fab fa-discord"></i> Discord Server
+    </a>
+    <a class="link-button telegram" href="https://t.me/darrliquer" target="_blank">
+      <i class="fab fa-telegram"></i> Telegram
+    </a>
+    <a class="link-button twogis" href="https://2gis.ru/user/0b76b22dcf9741b381e78401e82270d0" target="_blank">
+      <i class="fas fa-map-marked-alt"></i> 2GIS
+    </a>
+
+    <button class="copy-btn" onclick="copyTelegram()">
+      <i class="fas fa-copy"></i> Copy Telegram
+    </button>
   </div>
 
+  <!-- Admin Panel -->
+  <div id="admin-overlay">
+    <div id="admin-panel">
+      <div id="admin-login">
+        <h3>Admin Access</h3>
+        <input type="password" id="admin-password" placeholder="Enter password">
+        <button onclick="checkAdminPassword()">Continue</button>
+        <button onclick="hideAdminPanel()" style="background: #e74c3c; margin-top: 10px;">Cancel</button>
+      </div>
+      <div id="admin-controls">
+        <h3>Status Manager</h3>
+        <select id="status-select">
+          <option value="offline">Offline</option>
+          <option value="online">Online</option>
+        </select>
+        <input type="text" id="status-custom-text" placeholder="What I'm doing...">
+        <button onclick="updateStatus()">Update Status</button>
+        <button onclick="hideAdminPanel()" style="background: #e74c3c; margin-top: 10px;">Close Panel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin hint -->
+  <div class="admin-hint">Press Ctrl+Alt+N or triple-click bottom-right</div>
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <script>
     // ======================
-    // 1. FIREBASE AUTH IMPLEMENTATION
+    // FIREBASE CONFIGURATION
     // ======================
     const firebaseConfig = {
       apiKey: "AIzaSyBwjcK9brfOAwlkojOfYgMO_dFY-DNvEvQ",
@@ -61,109 +256,136 @@
       appId: "1:440508513511:web:f85ed92675fd040aad3642"
     };
 
-    // SECURITY: Инициализация с обработкой ошибок
-    try {
-      const app = firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const database = firebase.database();
-    } catch (err) {
-      console.error("Firebase init error", err);
-      document.getElementById('status-message').textContent = "Service unavailable";
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const SECRET_KEY = "nxriiscool"; // Must match Firebase rules
+
+    // ======================
+    // STATUS SYSTEM
+    // ======================
+    function loadStatus() {
+      database.ref('status').on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        updateUI(data);
+      });
     }
 
-    // Функции для работы с аутентификацией
-    function showAuthForm() {
-      document.getElementById('auth-form').style.display = 'block';
-    }
-
-    function hideAuthForm() {
-      document.getElementById('auth-form').style.display = 'none';
-    }
-
-    async function login() {
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
-      
-      try {
-        await auth.signInWithEmailAndPassword(email, password);
-        hideAuthForm();
-        showAdminPanel();
-      } catch (error) {
-        alert("Login failed: " + error.message);
-      }
+    function updateUI(status) {
+      document.getElementById('status-dot').className = 'status-dot ' + (status.state || 'loading');
+      document.getElementById('status-text').textContent = 
+        status.state === 'online' ? 'Online' : 
+        status.state === 'offline' ? 'Offline' : 'Loading';
+      document.getElementById('status-message').textContent = status.message || 'Status not available';
     }
 
     // ======================
-    // 2. API KEY PROTECTION
+    // ADMIN PANEL (TRIPLE-CLICK + HOTKEY)
     // ======================
-    // SECURITY: Эти настройки нужно сделать в Google Cloud Console:
-    // 1. Перейдите https://console.cloud.google.com/apis/credentials
-    // 2. Выберите ваш API ключ
-    // 3. Включите ограничения:
-    //    - HTTP-рефереры: nuriiscool.github.io
-    //    - API: Firebase Management API, Firebase Rules API
+    const ADMIN_PASSWORD = "nuriiscool"; // Changed to your requested password
+    let clickCount = 0;
 
-    // ======================
-    // UPDATED ADMIN FUNCTIONS
-    // ======================
     function showAdminPanel() {
-      // Проверяем аутентификацию вместо пароля
-      if (!auth.currentUser) {
-        showAuthForm();
-        return;
-      }
-      
       database.ref('status').once('value').then((snapshot) => {
         const currentStatus = snapshot.val() || {};
         document.getElementById('status-select').value = currentStatus.state || 'online';
         document.getElementById('status-custom-text').value = currentStatus.message || '';
-        document.getElementById('admin-overlay').style.display = 'flex';
       });
+      document.getElementById('admin-overlay').style.display = 'flex';
+      document.getElementById('admin-login').style.display = 'block';
+      document.getElementById('admin-controls').style.display = 'none';
+    }
+    
+    function hideAdminPanel() {
+      document.getElementById('admin-overlay').style.display = 'none';
+    }
+    
+    function checkAdminPassword() {
+      const password = document.getElementById('admin-password').value;
+      if (password === ADMIN_PASSWORD) {
+        document.getElementById('admin-login').style.display = 'none';
+        document.getElementById('admin-controls').style.display = 'block';
+      } else {
+        alert("Incorrect password!");
+      }
     }
 
     function updateStatus() {
-      if (!auth.currentUser) {
-        alert("Please login first!");
-        return;
-      }
-
       const status = document.getElementById('status-select').value;
       const text = document.getElementById('status-custom-text').value;
       
       database.ref('status').set({
         state: status,
         message: text,
-        updatedBy: auth.currentUser.uid,
+        secretKey: SECRET_KEY, // Required by your Firebase rules
         timestamp: firebase.database.ServerValue.TIMESTAMP
       }).then(() => {
-        alert("Status updated!");
+        alert("Status updated permanently!");
+        hideAdminPanel();
+      }).catch((error) => {
+        alert("Error updating: " + error.message);
       });
     }
 
-    // ======================
-    // FIREBASE RULES (must update in Firebase console)
-    // ======================
-    /*
-    {
-      "rules": {
-        "status": {
-          ".read": true,
-          ".write": "auth != null && 
-                   newData.child('updatedBy').val() == auth.uid"
+    // Triple-click detection (bottom-right corner)
+    document.addEventListener('click', (e) => {
+      if (e.clientX > window.innerWidth - 150 && e.clientY > window.innerHeight - 150) {
+        clickCount++;
+        if (clickCount >= 3) {
+          showAdminPanel();
+          clickCount = 0;
         }
-      }
-    }
-    */
-
-    // Инициализация
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        console.log("User logged in:", user.email);
+        setTimeout(() => { clickCount = 0; }, 1000);
       }
     });
 
-    particlesJS("particles-js", { 
-      /* конфиг частиц без изменений */ 
+    // Hotkey: Ctrl+Alt+N
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'n') {
+        showAdminPanel();
+      }
+    });
+
+    // ======================
+    // OTHER FUNCTIONS
+    // ======================
+    function copyTelegram() {
+      navigator.clipboard.writeText('@darrliquer')
+        .then(() => {
+          const btn = document.querySelector('.copy-btn');
+          btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy"></i> Copy Telegram';
+          }, 2000);
+        });
+    }
+
+    // ======================
+    // INITIALIZATION
+    // ======================
+    loadStatus();
+    
+    // Particles.js configuration
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 60 },
+        "size": { "value": 3 },
+        "color": { "value": "#ffffff" },
+        "opacity": { "value": 0.3 },
+        "move": { "speed": 1 },
+        "line_linked": {
+          "enable": true,
+          "distance": 120,
+          "color": "#ffffff",
+          "opacity": 0.2,
+          "width": 1
+        }
+      },
+      "interactivity": {
+        "events": {
+          "onhover": { "enable": true, "mode": "repulse" }
+        }
+      }
     });
   </script>
 </body>
