@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nuri | Social Links</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -13,14 +14,14 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       color: white;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       padding: 20px;
       position: relative;
-      overflow: hidden;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     }
     #particles-js {
       position: fixed;
@@ -29,14 +30,12 @@
       top: 0;
       left: 0;
       z-index: 0;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     }
     .content {
       position: relative;
       z-index: 1;
       text-align: center;
       max-width: 500px;
-      width: 100%;
       animation: fadeIn 1.2s ease;
     }
     @keyframes fadeIn {
@@ -73,7 +72,7 @@
     }
     .online { background: #2ecc71; }
     .offline { background: #95a5a6; }
-    .loading { background: #f39c12; }
+    .unknown { background: #f39c12; }
     .status-message {
       max-width: 300px;
       margin: 0 auto 20px;
@@ -81,6 +80,48 @@
       background: rgba(0, 0, 0, 0.2);
       border-radius: 8px;
       font-size: 14px;
+    }
+    #admin-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    #admin-panel {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    #admin-login {
+      display: block;
+    }
+    #admin-controls {
+      display: none;
+    }
+    input, select, button {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      margin: 8px 0;
+      width: 100%;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      opacity: 0.9;
     }
     .link-button {
       display: flex;
@@ -100,7 +141,6 @@
     .link-button:hover {
       transform: translateY(-3px) scale(1.03);
     }
-    /* Градиенты как в оригинале */
     .instagram { background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff6a00); }
     .tiktok { background: linear-gradient(45deg, #010101, #00f2ea, #ff004c); }
     .youtube { background: linear-gradient(45deg, #ff0000, #ffffff); }
@@ -110,54 +150,18 @@
     .copy-btn {
       margin-top: 15px;
       background: linear-gradient(45deg, #00c9ff, #92fe9d);
-      border: none;
-      color: white;
       padding: 12px 20px;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-    .copy-btn:hover {
-      transform: scale(1.05);
-    }
-    /* Админ-панель */
-    #admin-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 100;
-      justify-content: center;
-      align-items: center;
-    }
-    #admin-panel {
-      background: rgba(0, 0, 0, 0.9);
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-    }
-    #admin-login {
-      display: block;
-    }
-    #admin-controls {
-      display: none;
-    }
-    input, select, button {
-      padding: 10px;
-      margin: 8px 0;
-      width: 100%;
-      border-radius: 5px;
       border: none;
-    }
-    button {
-      background: #3498db;
+      border-radius: 25px;
       color: white;
       cursor: pointer;
+    }
+    .admin-hint {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(255,255,255,0.3);
+      font-size: 12px;
     }
     @media (max-width: 500px) {
       .link-button { width: 90%; }
@@ -165,17 +169,17 @@
   </style>
 </head>
 <body>
-  <!-- Анимированный фон -->
+  <!-- Animated background -->
   <div id="particles-js"></div>
 
-  <!-- Контент -->
+  <!-- Main content -->
   <div class="content">
     <img src="kokushibo.png" class="avatar" alt="Nuri">
     <h2>Nuri</h2>
     
-    <!-- Статус -->
+    <!-- Status system -->
     <div class="status" id="status-container">
-      <div class="status-dot loading" id="status-dot"></div>
+      <div class="status-dot unknown" id="status-dot"></div>
       <span id="status-text">Loading...</span>
     </div>
     <div class="status-message" id="status-message">
@@ -209,7 +213,7 @@
     </button>
   </div>
 
-  <!-- Админ-панель -->
+  <!-- Admin Panel -->
   <div id="admin-overlay">
     <div id="admin-panel">
       <div id="admin-login">
@@ -231,72 +235,75 @@
     </div>
   </div>
 
-  <!-- Скрипты -->
+  <!-- Admin hint -->
+  <div class="admin-hint">Press Ctrl+Alt+N or triple-click bottom-right</div>
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
     // ======================
-    // УЛУЧШЕННАЯ СИСТЕМА СТАТУСА
+    // STATUS SYSTEM
     // ======================
-    let lastStatus = {
-      state: 'loading',
-      message: 'Connecting...'
+    let currentStatus = {
+      state: "online",
+      message: "Everything works great!"
     };
 
-    // Быстрая инициализация статуса
     function initStatus() {
-      document.getElementById('status-dot').className = 'status-dot ' + lastStatus.state;
-      document.getElementById('status-text').textContent = 
-        lastStatus.state === 'online' ? 'Online' : 
-        lastStatus.state === 'offline' ? 'Offline' : 'Loading...';
-      document.getElementById('status-message').textContent = lastStatus.message;
-    }
-
-    // Обновление статуса
-    function updateStatusUI(data) {
-      lastStatus = {
-        state: data.state || 'offline',
-        message: data.message || 'Status not available'
-      };
-      
-      document.getElementById('status-dot').className = 'status-dot ' + lastStatus.state;
-      document.getElementById('status-text').textContent = 
-        lastStatus.state === 'online' ? 'Online' : 'Offline';
-      document.getElementById('status-message').textContent = lastStatus.message;
-    }
-
-    // ======================
-    // ЭМУЛЯЦИЯ БАЗЫ ДАННЫХ (для быстрой загрузки)
-    // ======================
-    function simulateStatusLoad() {
-      // Первое мгновенное обновление
       setTimeout(() => {
-        updateStatusUI({
-          state: 'online',
-          message: 'Everything works great!'
-        });
+        document.getElementById('status-dot').className = 'status-dot ' + currentStatus.state;
+        document.getElementById('status-text').textContent = 
+          currentStatus.state === 'online' ? 'Online' : 'Offline';
+        document.getElementById('status-message').textContent = currentStatus.message;
       }, 300);
     }
 
     // ======================
-    // АДМИН-ПАНЕЛЬ
+    // ADMIN PANEL (TRIPLE-CLICK + HOTKEY)
     // ======================
-   function updateStatus() {
-  const status = document.getElementById('status-select').value;
-  const text = document.getElementById('status-custom-text').value;
-  
-  database.ref('status').set({
-    state: status,
-    message: text,
-    secretKey: "nxriiscool" // Должен совпадать с правилами
-  }).then(() => {
-    alert("Статус обновлен!");
-  }).catch((error) => {
-    alert("Ошибка: " + error.message);
-  });
-}
-    // Активация по тройному клику
+    const ADMIN_PASSWORD = "nxriiscool"; // CHANGE THIS!
+    let clickCount = 0;
+
+    function showAdminPanel() {
+      document.getElementById('admin-overlay').style.display = 'flex';
+      document.getElementById('admin-login').style.display = 'block';
+      document.getElementById('admin-controls').style.display = 'none';
+    }
+    
+    function hideAdminPanel() {
+      document.getElementById('admin-overlay').style.display = 'none';
+    }
+    
+    function checkAdminPassword() {
+      const password = document.getElementById('admin-password').value;
+      if (password === ADMIN_PASSWORD) {
+        document.getElementById('admin-login').style.display = 'none';
+        document.getElementById('admin-controls').style.display = 'block';
+        document.getElementById('status-select').value = currentStatus.state;
+        document.getElementById('status-custom-text').value = currentStatus.message;
+      } else {
+        alert("Incorrect password!");
+      }
+    }
+
+    function updateStatus() {
+      currentStatus = {
+        state: document.getElementById('status-select').value,
+        message: document.getElementById('status-custom-text').value || "Status not set"
+      };
+      
+      document.getElementById('status-dot').className = 'status-dot ' + currentStatus.state;
+      document.getElementById('status-text').textContent = 
+        currentStatus.state === 'online' ? 'Online' : 'Offline';
+      document.getElementById('status-message').textContent = currentStatus.message;
+      
+      alert("Status updated!");
+      hideAdminPanel();
+    }
+
+    // Triple-click detection (bottom-right corner)
     document.addEventListener('click', (e) => {
-      if (e.clientX > window.innerWidth - 100 && e.clientY > window.innerHeight - 100) {
+      if (e.clientX > window.innerWidth - 150 && e.clientY > window.innerHeight - 150) {
         clickCount++;
         if (clickCount >= 3) {
           showAdminPanel();
@@ -306,8 +313,15 @@
       }
     });
 
+    // Hotkey: Ctrl+Alt+N
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'n') {
+        showAdminPanel();
+      }
+    });
+
     // ======================
-    // ДРУГИЕ ФУНКЦИИ
+    // OTHER FUNCTIONS
     // ======================
     function copyTelegram() {
       navigator.clipboard.writeText('@darrliquer')
@@ -321,12 +335,11 @@
     }
 
     // ======================
-    // ИНИЦИАЛИЗАЦИЯ
+    // INITIALIZATION
     // ======================
     initStatus();
-    simulateStatusLoad(); // Быстрая загрузка статуса
     
-    // Частицы (как в оригинале)
+    // Particles.js configuration
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 60 },
