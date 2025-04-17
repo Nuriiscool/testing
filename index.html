@@ -6,7 +6,6 @@
   <title>Nuri | Social Links</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* Все ваши стили остаются без изменений */
     * {
       margin: 0;
       padding: 0;
@@ -24,16 +23,194 @@
       position: relative;
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     }
-    /* ... остальные стили ... */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 500px;
+      animation: fadeIn 1.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 4px solid white;
+      object-fit: cover;
+      margin-bottom: 15px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      transition: transform 0.3s;
+    }
+    .avatar:hover {
+      transform: scale(1.05);
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 15px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      font-size: 14px;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .online { background: #2ecc71; }
+    .offline { background: #95a5a6; }
+    .loading { background: #f39c12; }
+    .status-message {
+      max-width: 300px;
+      margin: 0 auto 20px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    #admin-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    #admin-panel {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    #admin-login {
+      display: block;
+    }
+    #admin-controls {
+      display: none;
+    }
+    input, select, button {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      margin: 8px 0;
+      width: 100%;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .link-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 260px;
+      margin: 10px auto;
+      padding: 14px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 30px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .link-button:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+    .instagram { background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff6a00); }
+    .tiktok { background: linear-gradient(45deg, #010101, #00f2ea, #ff004c); }
+    .youtube { background: linear-gradient(45deg, #ff0000, #ffffff); }
+    .discord { background: linear-gradient(45deg, #7289da, #ffffff); }
+    .telegram { background: linear-gradient(45deg, #0088cc, #ffffff); }
+    .twogis { background: linear-gradient(45deg, #00b4d8, #ffbe0b, #38b000); }
+    .copy-btn {
+      margin-top: 15px;
+      background: linear-gradient(45deg, #00c9ff, #92fe9d);
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      cursor: pointer;
+    }
+    .admin-hint {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(255,255,255,0.3);
+      font-size: 12px;
+    }
+    @media (max-width: 500px) {
+      .link-button { width: 90%; }
+    }
   </style>
 </head>
 <body>
   <!-- Animated background -->
   <div id="particles-js"></div>
 
-  <!-- Main content (остается без изменений) -->
+  <!-- Main content -->
   <div class="content">
-    <!-- Ваш существующий контент -->
+    <img src="kokushibo.png" class="avatar" alt="Nuri">
+    <h2>Nuri</h2>
+    
+    <!-- Status system -->
+    <div class="status" id="status-container">
+      <div class="status-dot loading" id="status-dot"></div>
+      <span id="status-text">Loading...</span>
+    </div>
+    <div class="status-message" id="status-message">
+      Connecting to status service...
+    </div>
+
+    <h1>Hello! 👋</h1>
+    <p>Connect with me:</p>
+
+    <a class="link-button instagram" href="https://instagram.com/nxr1_ba" target="_blank">
+      <i class="fab fa-instagram"></i> Instagram
+    </a>
+    <a class="link-button tiktok" href="https://tiktok.com/@nxr1_ba" target="_blank">
+      <i class="fab fa-tiktok"></i> TikTok
+    </a>
+    <a class="link-button youtube" href="https://youtube.com/@Nuriiscool" target="_blank">
+      <i class="fab fa-youtube"></i> YouTube
+    </a>
+    <a class="link-button discord" href="https://discord.gg/R2D36VqGKA" target="_blank">
+      <i class="fab fa-discord"></i> Discord Server
+    </a>
+    <a class="link-button telegram" href="https://t.me/darrliquer" target="_blank">
+      <i class="fab fa-telegram"></i> Telegram
+    </a>
+    <a class="link-button twogis" href="https://2gis.ru/user/0b76b22dcf9741b381e78401e82270d0" target="_blank">
+      <i class="fas fa-map-marked-alt"></i> 2GIS
+    </a>
+
+    <button class="copy-btn" onclick="copyTelegram()">
+      <i class="fas fa-copy"></i> Copy Telegram
+    </button>
   </div>
 
   <!-- Admin Panel -->
@@ -65,7 +242,6 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-
   <script>
     // ======================
     // FIREBASE CONFIGURATION
@@ -83,10 +259,10 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
-    const SECRET_KEY = "nxriiscool";
+    const SECRET_KEY = "nxriiscool"; // Must match Firebase rules
 
     // ======================
-    // STATUS SYSTEM (без изменений)
+    // STATUS SYSTEM
     // ======================
     function loadStatus() {
       database.ref('status').on('value', (snapshot) => {
@@ -104,12 +280,17 @@
     }
 
     // ======================
-    // ADMIN PANEL PROTECTION
+    // ADMIN PANEL (TRIPLE-CLICK + HOTKEY)
     // ======================
-    const ADMIN_PASSWORD = "nuriiscool"; // Пароль только для админки
-    let adminAccessGranted = false;
+    const ADMIN_PASSWORD = "nuriiscool"; // Changed to your requested password
+    let clickCount = 0;
 
     function showAdminPanel() {
+      database.ref('status').once('value').then((snapshot) => {
+        const currentStatus = snapshot.val() || {};
+        document.getElementById('status-select').value = currentStatus.state || 'online';
+        document.getElementById('status-custom-text').value = currentStatus.message || '';
+      });
       document.getElementById('admin-overlay').style.display = 'flex';
       document.getElementById('admin-login').style.display = 'block';
       document.getElementById('admin-controls').style.display = 'none';
@@ -117,55 +298,36 @@
     
     function hideAdminPanel() {
       document.getElementById('admin-overlay').style.display = 'none';
-      adminAccessGranted = false;
     }
     
     function checkAdminPassword() {
       const password = document.getElementById('admin-password').value;
       if (password === ADMIN_PASSWORD) {
-        adminAccessGranted = true;
         document.getElementById('admin-login').style.display = 'none';
         document.getElementById('admin-controls').style.display = 'block';
-        loadCurrentStatus();
       } else {
         alert("Incorrect password!");
       }
     }
 
-    function loadCurrentStatus() {
-      database.ref('status').once('value').then((snapshot) => {
-        const currentStatus = snapshot.val() || {};
-        document.getElementById('status-select').value = currentStatus.state || 'online';
-        document.getElementById('status-custom-text').value = currentStatus.message || '';
-      });
-    }
-
     function updateStatus() {
-      if (!adminAccessGranted) {
-        alert("Access denied!");
-        return;
-      }
-
       const status = document.getElementById('status-select').value;
       const text = document.getElementById('status-custom-text').value;
       
       database.ref('status').set({
         state: status,
         message: text,
-        secretKey: SECRET_KEY,
+        secretKey: SECRET_KEY, // Required by your Firebase rules
         timestamp: firebase.database.ServerValue.TIMESTAMP
       }).then(() => {
-        alert("Status updated!");
+        alert("Status updated permanently!");
         hideAdminPanel();
       }).catch((error) => {
         alert("Error updating: " + error.message);
       });
     }
 
-    // ======================
-    // TRIGGERS (без изменений)
-    // ======================
-    let clickCount = 0;
+    // Triple-click detection (bottom-right corner)
     document.addEventListener('click', (e) => {
       if (e.clientX > window.innerWidth - 150 && e.clientY > window.innerHeight - 150) {
         clickCount++;
@@ -177,6 +339,7 @@
       }
     });
 
+    // Hotkey: Ctrl+Alt+N
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'n') {
         showAdminPanel();
@@ -184,7 +347,7 @@
     });
 
     // ======================
-    // OTHER FUNCTIONS (без изменений)
+    // OTHER FUNCTIONS
     // ======================
     function copyTelegram() {
       navigator.clipboard.writeText('@darrliquer')
@@ -202,6 +365,7 @@
     // ======================
     loadStatus();
     
+    // Particles.js configuration
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 60 },
